@@ -53,6 +53,7 @@ header .navbar-brand img {
 .menu-item-list .nav-link {
     font-size: 45px;
     line-height: 40px;
+    white-space: nowrap;
 }
 /* font size */
 .fs-335 {

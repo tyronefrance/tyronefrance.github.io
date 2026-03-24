@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://tyfra.uk/sitemap.xml
