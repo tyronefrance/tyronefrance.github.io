@@ -50,6 +50,12 @@ header .navbar-brand img {
 .hamburger-nav {
     width: 30%;
 }
+/* cert badges */
+.cert-badge {
+    border: 2px solid #e0e0e0;
+    padding: 8px;
+    border-radius: 10px;
+}
 .menu-item-list .nav-link {
     font-size: 45px;
     line-height: 40px;
