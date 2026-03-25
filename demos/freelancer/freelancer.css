@@ -52,7 +52,6 @@ header .navbar-brand img {
 }
 /* cert badges */
 .cert-badge {
-    border: 2px solid #e0e0e0;
     padding: 8px;
     border-radius: 10px;
 }
