@@ -95,7 +95,7 @@ header .navbar-brand img {
     text-shadow: 0 20px 60px rgb(0, 0, 0, 0.15);
 }
 .outside-box-bottom-2 {
-    margin-bottom: -2vw; 
+    margin-bottom: -7vw;
 }
 @media only screen and (max-width: 1700px) {
     .hamburger-nav {
