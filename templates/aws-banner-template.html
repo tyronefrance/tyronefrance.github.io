@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AWS Cheat Sheet Banner Maker</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Poppins:wght@400;600;700;800&family=Raleway:wght@400;600;700;800&family=Inter:wght@400;600;700;800&family=Oswald:wght@400;600;700&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #1a1a2e;
+    font-family: 'Montserrat', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 20px;
+    gap: 30px;
+    min-height: 100vh;
+  }
+
+  h1 { color: #fff; font-size: 20px; font-weight: 700; letter-spacing: 1px; }
+
+  .layout {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    max-width: 1200px;
+  }
+
+  #banner {
+    position: relative;
+    width: 600px;
+    height: 600px;
+    background: #1e2a3a;
+    overflow: hidden;
+    flex-shrink: 0;
+    border-radius: 4px;
+  }
+
+  .corner { position: absolute; opacity: 0.45; }
+  .corner-tl {
+    top: -20px; left: -20px; width: 220px; height: 160px;
+    background: linear-gradient(135deg, #8899aa 0%, #556677 40%, transparent 70%);
+    border-radius: 0 0 80% 0; transform: rotate(-10deg);
+  }
+  .corner-tr {
+    top: -20px; right: -20px; width: 220px; height: 160px;
+    background: linear-gradient(225deg, #8899aa 0%, #556677 40%, transparent 70%);
+    border-radius: 0 0 0 80%; transform: rotate(10deg);
+  }
+  .laptop-screen {
+    position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+    width: 160px; height: 100px;
+    background: linear-gradient(180deg, #2a3a4a 0%, #1e2a3a 100%);
+    border: 3px solid #4a5a6a; border-radius: 6px 6px 0 0; opacity: 0.5;
+  }
+
+  .banner-content {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    padding: 40px 50px 60px; text-align: center; gap: 8px;
+  }
+
+  #preview-title {
+    font-size: 46px; font-weight: 800; color: #ffffff;
+    line-height: 1.1; letter-spacing: 1px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    margin-bottom: 4px; font-family: 'Montserrat', sans-serif;
+  }
+  #preview-subtitle {
+    font-size: 24px; font-weight: 600; color: #f0a500;
+    margin-bottom: 14px; line-height: 1.2; font-family: 'Montserrat', sans-serif;
+  }
+  .banner-bullets { display: flex; flex-direction: column; gap: 4px; align-items: center; }
+  .banner-bullet {
+    font-size: 18px; font-weight: 500; color: #dde8f0;
+    line-height: 1.5; font-family: 'Montserrat', sans-serif;
+  }
+  .bottom-stripe {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 14px; background: #f0a500;
+  }
+
+  /* CONTROLS */
+  .controls {
+    background: #16213e; border: 1px solid #2a3a5a; border-radius: 12px;
+    padding: 20px; width: 340px; display: flex; flex-direction: column;
+    gap: 14px; max-height: 90vh; overflow-y: auto;
+  }
+  .controls::-webkit-scrollbar { width: 5px; }
+  .controls::-webkit-scrollbar-track { background: #0f172a; border-radius: 4px; }
+  .controls::-webkit-scrollbar-thumb { background: #2a3a5a; border-radius: 4px; }
+
+  .section-title { color: #f0a500; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; }
+  .field-group { display: flex; flex-direction: column; gap: 5px; }
+  label { color: #8899bb; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+
+  input[type="text"], select {
+    background: #0f172a; border: 1px solid #2a3a5a; border-radius: 6px;
+    color: #e0eaf8; font-family: 'Montserrat', sans-serif; font-size: 13px;
+    padding: 7px 10px; width: 100%; transition: border-color 0.2s;
+  }
+  input[type="text"]:focus, select:focus { outline: none; border-color: #f0a500; }
+  select option { background: #0f172a; }
+
+  .size-row { display: flex; align-items: center; gap: 8px; }
+  .size-row input[type="range"] { flex: 1; accent-color: #f0a500; cursor: pointer; }
+  .size-val { color: #f0a500; font-size: 12px; font-weight: 700; min-width: 34px; text-align: right; }
+
+  .color-row { display: flex; align-items: center; gap: 8px; }
+  input[type="color"] {
+    width: 36px; height: 30px; border: 1px solid #2a3a5a; border-radius: 6px;
+    background: #0f172a; cursor: pointer; padding: 2px; flex-shrink: 0;
+  }
+  .color-hex {
+    background: #0f172a; border: 1px solid #2a3a5a; border-radius: 6px;
+    color: #e0eaf8; font-size: 12px; padding: 5px 8px; width: 90px; font-family: monospace;
+  }
+
+  .weight-row { display: flex; gap: 6px; }
+  .weight-btn {
+    background: #0f172a; border: 1px solid #2a3a5a; border-radius: 6px;
+    color: #8899bb; font-size: 11px; font-family: 'Montserrat', sans-serif;
+    padding: 5px 8px; cursor: pointer; transition: all 0.15s; flex: 1; text-align: center;
+  }
+  .weight-btn.active { background: #1a3a5a; border-color: #f0a500; color: #f0a500; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .divider { border: none; border-top: 1px solid #2a3a5a; }
+
+  .bullet-row { display: flex; gap: 6px; align-items: center; margin-bottom: 6px; }
+  .bullet-row input { flex: 1; }
+  .remove-btn {
+    background: #2a1a1a; border: 1px solid #5a2a2a; color: #ff6666;
+    border-radius: 4px; width: 26px; height: 26px; cursor: pointer;
+    font-size: 14px; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .remove-btn:hover { background: #5a2a2a; }
+
+  .add-btn {
+    background: #0f172a; border: 1px dashed #2a3a5a; color: #8899bb;
+    border-radius: 6px; padding: 7px; font-size: 12px;
+    font-family: 'Montserrat', sans-serif; cursor: pointer; text-align: center; width: 100%;
+  }
+  .add-btn:hover { border-color: #f0a500; color: #f0a500; }
+
+  .download-btn {
+    background: #f0a500; color: #0f172a; border: none; border-radius: 8px;
+    padding: 12px; font-family: 'Montserrat', sans-serif; font-size: 14px;
+    font-weight: 700; cursor: pointer; width: 100%; letter-spacing: 1px;
+  }
+  .download-btn:hover { background: #ffc133; }
+  .hint { color: #556677; font-size: 11px; text-align: center; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<h1>🎨 AWS Banner Template Maker</h1>
+
+<div class="layout">
+
+  <div id="banner">
+    <div class="corner corner-tl"></div>
+    <div class="corner corner-tr"></div>
+    <div class="laptop-screen"></div>
+    <div class="banner-content">
+      <div id="preview-title">TYFRA CHEAT SHEETS</div>
+      <div id="preview-subtitle">AWS SAA-C03 Full Study Bundle</div>
+      <div class="banner-bullets" id="preview-bullets">
+        <div class="banner-bullet">- Cheat Sheet (4 pages)</div>
+        <div class="banner-bullet">- Architecture Patterns (1 page)</div>
+        <div class="banner-bullet">- Practice Test (6 pages)</div>
+        <div class="banner-bullet">- Crib Sheet (1 page)</div>
+      </div>
+    </div>
+    <div class="bottom-stripe"></div>
+  </div>
+
+  <div class="controls">
+
+    <div class="section-title">🔤 Font Family</div>
+    <div class="field-group">
+      <label>Applied to all text</label>
+      <select id="font-family" onchange="updateFont()">
+        <option value="Montserrat">Montserrat (default)</option>
+        <option value="Poppins">Poppins</option>
+        <option value="Raleway">Raleway</option>
+        <option value="Inter">Inter</option>
+        <option value="Oswald">Oswald</option>
+        <option value="Roboto Condensed">Roboto Condensed</option>
+      </select>
+    </div>
+
+    <hr class="divider">
+    <div class="section-title">📌 Main Title</div>
+
+    <div class="field-group">
+      <label>Text</label>
+      <input type="text" id="input-title" value="TYFRA CHEAT SHEETS" oninput="updateTitle(this.value)">
+    </div>
+    <div class="field-group">
+      <label>Font Size</label>
+      <div class="size-row">
+        <input type="range" id="title-size" min="20" max="72" value="46" oninput="updateTitleStyle()">
+        <span class="size-val" id="title-size-val">46px</span>
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="field-group">
+        <label>Colour</label>
+        <div class="color-row">
+          <input type="color" id="title-color" value="#ffffff" oninput="syncHex('title-color','title-color-hex'); updateTitleStyle()">
+          <input class="color-hex" id="title-color-hex" value="#ffffff" oninput="syncPicker('title-color','title-color-hex'); updateTitleStyle()">
+        </div>
+      </div>
+      <div class="field-group">
+        <label>Weight</label>
+        <div class="weight-row">
+          <button class="weight-btn" onclick="setWeight('title','600',this)">Semi</button>
+          <button class="weight-btn" onclick="setWeight('title','700',this)">Bold</button>
+          <button class="weight-btn active" onclick="setWeight('title','800',this)">Black</button>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+    <div class="section-title">🟠 Subtitle</div>
+
+    <div class="field-group">
+      <label>Text</label>
+      <input type="text" id="input-subtitle" value="AWS SAA-C03 Full Study Bundle" oninput="updateSubtitle(this.value)">
+    </div>
+    <div class="field-group">
+      <label>Font Size</label>
+      <div class="size-row">
+        <input type="range" id="subtitle-size" min="12" max="48" value="24" oninput="updateSubtitleStyle()">
+        <span class="size-val" id="subtitle-size-val">24px</span>
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="field-group">
+        <label>Colour</label>
+        <div class="color-row">
+          <input type="color" id="subtitle-color" value="#f0a500" oninput="syncHex('subtitle-color','subtitle-color-hex'); updateSubtitleStyle()">
+          <input class="color-hex" id="subtitle-color-hex" value="#f0a500" oninput="syncPicker('subtitle-color','subtitle-color-hex'); updateSubtitleStyle()">
+        </div>
+      </div>
+      <div class="field-group">
+        <label>Weight</label>
+        <div class="weight-row">
+          <button class="weight-btn" onclick="setWeight('subtitle','600',this)">Semi</button>
+          <button class="weight-btn active" onclick="setWeight('subtitle','700',this)">Bold</button>
+          <button class="weight-btn" onclick="setWeight('subtitle','800',this)">Black</button>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+    <div class="section-title">📋 Bullet Points</div>
+
+    <div class="field-group">
+      <label>Font Size</label>
+      <div class="size-row">
+        <input type="range" id="bullet-size" min="10" max="36" value="18" oninput="updateBulletStyle()">
+        <span class="size-val" id="bullet-size-val">18px</span>
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="field-group">
+        <label>Colour</label>
+        <div class="color-row">
+          <input type="color" id="bullet-color" value="#dde8f0" oninput="syncHex('bullet-color','bullet-color-hex'); updateBulletStyle()">
+          <input class="color-hex" id="bullet-color-hex" value="#dde8f0" oninput="syncPicker('bullet-color','bullet-color-hex'); updateBulletStyle()">
+        </div>
+      </div>
+      <div class="field-group">
+        <label>Weight</label>
+        <div class="weight-row">
+          <button class="weight-btn" onclick="setWeight('bullet','400',this)">Reg</button>
+          <button class="weight-btn active" onclick="setWeight('bullet','600',this)">Semi</button>
+          <button class="weight-btn" onclick="setWeight('bullet','700',this)">Bold</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label>Items</label>
+      <div id="bullets-list">
+        <div class="bullet-row"><input type="text" value="Cheat Sheet (4 pages)" oninput="updateBullets()"><button class="remove-btn" onclick="removeBullet(this)">×</button></div>
+        <div class="bullet-row"><input type="text" value="Architecture Patterns (1 page)" oninput="updateBullets()"><button class="remove-btn" onclick="removeBullet(this)">×</button></div>
+        <div class="bullet-row"><input type="text" value="Practice Test (6 pages)" oninput="updateBullets()"><button class="remove-btn" onclick="removeBullet(this)">×</button></div>
+        <div class="bullet-row"><input type="text" value="Crib Sheet (1 page)" oninput="updateBullets()"><button class="remove-btn" onclick="removeBullet(this)">×</button></div>
+      </div>
+      <button class="add-btn" onclick="addBullet()">+ Add bullet point</button>
+    </div>
+
+    <hr class="divider">
+    <div class="section-title">🎨 Background & Stripe</div>
+
+    <div class="two-col">
+      <div class="field-group">
+        <label>Background</label>
+        <div class="color-row">
+          <input type="color" id="bg-color" value="#1e2a3a" oninput="syncHex('bg-color','bg-color-hex'); updateBg()">
+          <input class="color-hex" id="bg-color-hex" value="#1e2a3a" oninput="syncPicker('bg-color','bg-color-hex'); updateBg()">
+        </div>
+      </div>
+      <div class="field-group">
+        <label>Stripe</label>
+        <div class="color-row">
+          <input type="color" id="stripe-color" value="#f0a500" oninput="syncHex('stripe-color','stripe-color-hex'); updateStripe()">
+          <input class="color-hex" id="stripe-color-hex" value="#f0a500" oninput="syncPicker('stripe-color','stripe-color-hex'); updateStripe()">
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+    <button class="download-btn" onclick="downloadBanner()">⬇ Download as PNG</button>
+    <p class="hint">Downloads a 1200×1200px PNG ready for Etsy listings</p>
+
+  </div>
+</div>
+
+<script>
+  const weights = { title: '800', subtitle: '700', bullet: '600' };
+
+  function syncHex(colorId, hexId) {
+    document.getElementById(hexId).value = document.getElementById(colorId).value;
+  }
+  function syncPicker(colorId, hexId) {
+    const val = document.getElementById(hexId).value;
+    if (/^#[0-9a-fA-F]{6}$/.test(val)) document.getElementById(colorId).value = val;
+  }
+
+  function getFont() { return document.getElementById('font-family').value; }
+
+  function updateFont() {
+    const f = getFont();
+    document.getElementById('preview-title').style.fontFamily = `'${f}', sans-serif`;
+    document.getElementById('preview-subtitle').style.fontFamily = `'${f}', sans-serif`;
+    document.querySelectorAll('.banner-bullet').forEach(el => el.style.fontFamily = `'${f}', sans-serif`);
+  }
+
+  function updateTitle(val) { document.getElementById('preview-title').textContent = val; }
+
+  function updateTitleStyle() {
+    const size = document.getElementById('title-size').value;
+    const color = document.getElementById('title-color').value;
+    document.getElementById('title-size-val').textContent = size + 'px';
+    const el = document.getElementById('preview-title');
+    el.style.fontSize = size + 'px';
+    el.style.color = color;
+    el.style.fontWeight = weights.title;
+  }
+
+  function updateSubtitle(val) { document.getElementById('preview-subtitle').textContent = val; }
+
+  function updateSubtitleStyle() {
+    const size = document.getElementById('subtitle-size').value;
+    const color = document.getElementById('subtitle-color').value;
+    document.getElementById('subtitle-size-val').textContent = size + 'px';
+    const el = document.getElementById('preview-subtitle');
+    el.style.fontSize = size + 'px';
+    el.style.color = color;
+    el.style.fontWeight = weights.subtitle;
+  }
+
+  function updateBulletStyle() {
+    const size = document.getElementById('bullet-size').value;
+    const color = document.getElementById('bullet-color').value;
+    document.getElementById('bullet-size-val').textContent = size + 'px';
+    document.querySelectorAll('.banner-bullet').forEach(el => {
+      el.style.fontSize = size + 'px';
+      el.style.color = color;
+      el.style.fontWeight = weights.bullet;
+    });
+  }
+
+  function updateBullets() {
+    const inputs = document.querySelectorAll('#bullets-list input');
+    const container = document.getElementById('preview-bullets');
+    const size = document.getElementById('bullet-size').value;
+    const color = document.getElementById('bullet-color').value;
+    container.innerHTML = '';
+    inputs.forEach(inp => {
+      if (inp.value.trim()) {
+        const div = document.createElement('div');
+        div.className = 'banner-bullet';
+        div.textContent = '- ' + inp.value;
+        div.style.fontSize = size + 'px';
+        div.style.color = color;
+        div.style.fontWeight = weights.bullet;
+        div.style.fontFamily = `'${getFont()}', sans-serif`;
+        container.appendChild(div);
+      }
+    });
+  }
+
+  function addBullet() {
+    const list = document.getElementById('bullets-list');
+    const row = document.createElement('div');
+    row.className = 'bullet-row';
+    row.innerHTML = `<input type="text" value="" oninput="updateBullets()" placeholder="New item..."><button class="remove-btn" onclick="removeBullet(this)">×</button>`;
+    list.appendChild(row);
+    row.querySelector('input').focus();
+  }
+
+  function removeBullet(btn) { btn.parentElement.remove(); updateBullets(); }
+
+  function setWeight(target, val, btn) {
+    weights[target] = val;
+    btn.closest('.weight-row').querySelectorAll('.weight-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    if (target === 'title') updateTitleStyle();
+    else if (target === 'subtitle') updateSubtitleStyle();
+    else updateBulletStyle();
+  }
+
+  function updateBg() { document.getElementById('banner').style.background = document.getElementById('bg-color').value; }
+  function updateStripe() { document.querySelector('.bottom-stripe').style.background = document.getElementById('stripe-color').value; }
+
+  function downloadBanner() {
+    const btn = document.querySelector('.download-btn');
+    btn.textContent = '⏳ Generating...';
+    btn.disabled = true;
+    html2canvas(document.getElementById('banner'), { scale: 2, useCORS: true, backgroundColor: null }).then(canvas => {
+      const link = document.createElement('a');
+      const title = document.getElementById('input-subtitle').value || 'banner';
+      link.download = title.replace(/[^a-z0-9]/gi, '-').toLowerCase() + '-banner.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      btn.textContent = '⬇ Download as PNG';
+      btn.disabled = false;
+    });
+  }
+</script>
+</body>
+</html>
