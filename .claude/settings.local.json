@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:d1.awsstatic.com)",
+      "WebFetch(domain:tutorialsdojo.com)",
+      "WebFetch(domain:www.examtopics.com)",
+      "WebFetch(domain:www.certimaan.com)",
+      "WebFetch(domain:www.passnexam.com)",
+      "WebFetch(domain:dev.to)",
+      "WebFetch(domain:www.educative.io)"
+    ]
+  }
+}
