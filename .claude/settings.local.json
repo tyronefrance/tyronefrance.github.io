@@ -8,7 +8,15 @@
       "WebFetch(domain:www.certimaan.com)",
       "WebFetch(domain:www.passnexam.com)",
       "WebFetch(domain:dev.to)",
-      "WebFetch(domain:www.educative.io)"
+      "WebFetch(domain:www.educative.io)",
+      "WebFetch(domain:www.etsy.com)",
+      "WebFetch(domain:www.comptia.org)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"https://raw.githubusercontent.com/awslabs/aws-icons-for-plantuml/master/dist/Storage/S3.svg\")",
+      "Bash(curl -s https://api.github.com/repos/awslabs/aws-icons-for-plantuml/git/trees/main?recursive=1)",
+      "Bash(python3 -c \"import sys,json; data=json.load\\(sys.stdin\\); [print\\(f[''''path'''']\\) for f in data.get\\(''''tree'''',[]\\) if f[''''path''''].endswith\\(''''.svg''''\\)]\")",
+      "Bash(curl -s https://api.github.com/repos/awslabs/aws-icons-for-plantuml/branches)",
+      "Bash(python3 -c \"import sys,json; [print\\(b[''''name'''']\\) for b in json.load\\(sys.stdin\\)]\")",
+      "WebFetch(domain:github.com)"
     ]
   }
 }
